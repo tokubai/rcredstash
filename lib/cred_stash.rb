@@ -1,7 +1,8 @@
 module CredStash
   class << self
-    def get(name, context: {}, raise_if_missing: false)
-      secret = Secret.find(name, context: context)
+    def get(name, context: {}, client: nil, raise_if_missing: false)
+      client_option = client ? { client: client } : {}
+      secret = Secret.find(name, context: context, **client_option)
 
       if secret.falsified?
         raise "Invalid secret. #{name} has falsified"

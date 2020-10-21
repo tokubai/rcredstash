@@ -29,11 +29,12 @@ class CredStash::Secret
   end
 
   class << self
-    def find(name, context: {})
+    def find(name, context: {}, client: nil)
       item = repository.get(name)
+      client_option = client ? { client: client } : {}
       new(
         name: name,
-        key: CredStash::CipherKey.decrypt(Base64.decode64(item.key), context: context),
+        key: CredStash::CipherKey.decrypt(Base64.decode64(item.key), context: context, **client_option),
         encrypted_value: Base64.decode64(item.contents),
         hmac: item.hmac
       )
